@@ -11,7 +11,7 @@ import os
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", type=str,
-                default=os.path.sep.join(["images", "adrian.jpg"]),
+                default=os.path.sep.join(["images", "15.jpg"]),
                 help="path to input image that we'll apply GrabCut to")
 ap.add_argument("-c", "--iter", type=int, default=10,
                 help="# of GrabCut iterations (larger value => slower runtime)")
@@ -25,7 +25,7 @@ mask = np.zeros(image.shape[:2], dtype="uint8")
 
 # define the bounding box coordinates that approximately define my
 # face and neck region (i.e., all visible skin)
-rect = (151, 43, 236, 368)
+rect = (90, 0, 470, 600)
 
 # allocate memory for two arrays that the GrabCut algorithm internally
 # uses when segmenting the foreground from the background
