@@ -16,26 +16,17 @@ y = torch.cat((y0, y1), ).type(torch.LongTensor)  # 标志值合并
 plt.scatter(x.detach().numpy()[:, 0], x.detach().numpy()[:, 1], c=y.detach().numpy(), s=100, lw=0)
 plt.show()
 
-
-class Net(torch.nn.Module):
-    def __init__(self, n_features, n_hidden, n_output):
-        super(Net, self).__init__()
-        self.hidden = torch.nn.Linear(n_features, n_hidden)  # 隐藏层线性输出
-        self.predict = torch.nn.Linear(n_hidden, n_output)  # 输出层线性输出
-
-    def forward(self, x):  # 正向传播
-        # 正向传播输入值, 神经网络分析出输出值
-        x = F.relu(self.hidden(x))  # 激励函数(隐藏层的线性值)
-        x = self.predict(x)  # 输出值，在该种类型判断中，其值不是预测值
-        return x
-
-
-net = Net(2, 11, 2)
+net = torch.nn.Sequential(
+    torch.nn.Linear(2, 10),
+    torch.nn.ReLU(),
+    torch.nn.Linear(10, 2),
+)
 print(net)
 '''
-Net(
-  (hidden): Linear(in_features=2, out_features=10, bias=True)
-  (predict): Linear(in_features=10, out_features=2, bias=True)
+Sequential(
+  (0): Linear(in_features=2, out_features=10, bias=True)
+  (1): ReLU()
+  (2): Linear(in_features=10, out_features=2, bias=True)
 )
 '''
 plt.ion()
