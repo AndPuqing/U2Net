@@ -5,6 +5,7 @@ import torchvision
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms  # , utils
 # import torch.optim as optim
@@ -22,6 +23,7 @@ from data_loader import SalObjDataset
 from model import U2NET  # full size version 173.6 MB
 from model import U2NETP  # small version u2net 4.7 MB
 import time
+
 
 # normalize the predicted SOD probability map
 
@@ -89,6 +91,7 @@ def get_parameters():
 
 def main():
     args = get_parameters()
+    print(args.input)
     # --------- 1. get image path and name ---------
     model_name = 'u2net'  # u2netp
     error_file_link = args.errorFile
@@ -99,7 +102,7 @@ def main():
             img_name_list.append(line)
     prediction_dir = args.output_dir
     model_dir = './saved_models/' + model_name + '.pth'
-    #print(img_name_list)
+    # print(img_name_list)
     print("Num of image paths in ", str(args.input), "is: ", len(img_name_list))
 
     # --------- 2. dataloader ---------
@@ -131,7 +134,9 @@ def main():
     # --------- 4. inference for each image ---------
     for i_test, data_test in enumerate(test_salobj_dataloader):
         try:
-            print("\r------In processing file {} with name {}--------".format(i_test + 1, img_name_list[i_test].split("/")[-1]), end='')
+            print("\r------In processing file {} with name {}--------".format(i_test + 1,
+                                                                              img_name_list[i_test].split("/")[-1]),
+                  end='')
 
             inputs_test = data_test['image']
             inputs_test = inputs_test.type(torch.FloatTensor)
@@ -142,7 +147,6 @@ def main():
                 inputs_test = Variable(inputs_test)
 
             d1, d2, d3, d4, d5, d6, d7 = net(inputs_test)
-
 
             # normalization
             pred = d1[:, 0, :, :]
@@ -162,4 +166,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
