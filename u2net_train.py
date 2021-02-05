@@ -1,4 +1,3 @@
-import os
 import torch
 import torchvision
 from torch.autograd import Variable
@@ -12,7 +11,6 @@ import torchvision.transforms as standard_transforms
 
 import numpy as np
 import glob
-import os
 
 from data_loader import Rescale
 from data_loader import RescaleT
@@ -39,7 +37,7 @@ def muti_bce_loss_fusion(d0, d1, d2, d3, d4, d5, d6, labels_v):
 	loss6 = bce_loss(d6,labels_v)
 
 	loss = loss0 + loss1 + loss2 + loss3 + loss4 + loss5 + loss6
-	print("l0: %3f, l1: %3f, l2: %3f, l3: %3f, l4: %3f, l5: %3f, l6: %3f\n"%(loss0.data.item(),loss1.data.item(),loss2.data.item(),loss3.data.item(),loss4.data.item(),loss5.data.item(),loss6.data.item()))
+	print("l0: %3f, l1: %3f, l2: %3f, l3: %3f, l4: %3f, l5: %3f, l6: %3f\n"%(loss0.data[0],loss1.data[0],loss2.data[0],loss3.data[0],loss4.data[0],loss5.data[0],loss6.data[0]))
 
 	return loss0, loss
 
@@ -48,14 +46,14 @@ def muti_bce_loss_fusion(d0, d1, d2, d3, d4, d5, d6, labels_v):
 
 model_name = 'u2net' #'u2netp'
 
-data_dir = os.path.join(os.getcwd(), 'train_data' + os.sep)
-tra_image_dir = os.path.join('DUTS', 'DUTS-TR', 'DUTS-TR', 'im_aug' + os.sep)
-tra_label_dir = os.path.join('DUTS', 'DUTS-TR', 'DUTS-TR', 'gt_aug' + os.sep)
+data_dir = './train_data/'
+tra_image_dir = 'DUTS/DUTS-TR/DUTS-TR/im_aug/'
+tra_label_dir = 'DUTS/DUTS-TR/DUTS-TR/gt_aug/'
 
 image_ext = '.jpg'
 label_ext = '.png'
 
-model_dir = os.path.join(os.getcwd(), 'saved_models', model_name + os.sep)
+model_dir = './saved_models/' + model_name +'/'
 
 epoch_num = 100000
 batch_size_train = 12
@@ -67,7 +65,7 @@ tra_img_name_list = glob.glob(data_dir + tra_image_dir + '*' + image_ext)
 
 tra_lbl_name_list = []
 for img_path in tra_img_name_list:
-	img_name = img_path.split(os.sep)[-1]
+	img_name = img_path.split("/")[-1]
 
 	aaa = img_name.split(".")
 	bbb = aaa[0:-1]
@@ -145,8 +143,8 @@ for epoch in range(0, epoch_num):
         optimizer.step()
 
         # # print statistics
-        running_loss += loss.data.item()
-        running_tar_loss += loss2.data.item()
+        running_loss += loss.data[0]
+        running_tar_loss += loss2.data[0]
 
         # del temporary outputs and loss
         del d0, d1, d2, d3, d4, d5, d6, loss2, loss
@@ -162,3 +160,5 @@ for epoch in range(0, epoch_num):
             net.train()  # resume train
             ite_num4val = 0
 
+if __name__ == "__main__":
+    main()
