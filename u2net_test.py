@@ -36,9 +36,9 @@ def my_collate(batch):
 def normPRED(d):
     ma = torch.max(d)
     mi = torch.min(d)
-
+    
     dn = (d - mi) / (ma - mi)
-
+    
     return dn
 
 
@@ -52,7 +52,7 @@ def save_output(image_name, pred, d_dir):
         img_name = image_name.split("/")[-1]
         image = io.imread(image_name)
         imo = im.resize((image.shape[1], image.shape[0]), resample=Image.BILINEAR)
-
+        
         pb_np = np.array(imo)
         image_filter = np.greater(pb_np, 200)
         only_image_name = img_name.split("/")[-1].split(".")[0]
@@ -80,12 +80,12 @@ def get_parameters():
     parser.add_argument("-o",
                         "--output_dir",
                         help="Path to the output dir", type=str)
-
+    
     parser.add_argument("-e",
                         "--errorFile",
                         help="Path to the log error file", type=str)
     args = parser.parse_args()
-
+    
     return args
 
 
@@ -104,7 +104,7 @@ def main():
     model_dir = './saved_models/' + model_name + '.pth'
     # print(img_name_list)
     print("Num of image paths in ", str(args.input), "is: ", len(img_name_list))
-
+    
     # --------- 2. dataloader ---------
     # 1. dataloader
     test_salobj_dataset = SalObjDataset(img_name_list=img_name_list,
@@ -112,13 +112,13 @@ def main():
                                         transform=transforms.Compose([RescaleT(320),
                                                                       ToTensorLab(flag=0)])
                                         )
-
+    
     test_salobj_dataloader = DataLoader(test_salobj_dataset,
                                         batch_size=1,
                                         shuffle=False,
                                         num_workers=1,
                                         collate_fn=my_collate)
-
+    
     # --------- 3. model define ---------
     if model_name == 'u2net':
         print("...load U2NET---173.6 MB")
@@ -130,31 +130,31 @@ def main():
     if torch.cuda.is_available():
         net.cuda()
     net.eval()
-
+    
     # --------- 4. inference for each image ---------
     for i_test, data_test in enumerate(test_salobj_dataloader):
         try:
             print("\r------In processing file {} with name {}--------".format(i_test + 1,
                                                                               img_name_list[i_test].split("/")[-1]),
                   end='')
-
+            
             inputs_test = data_test['image']
             inputs_test = inputs_test.type(torch.FloatTensor)
-
+            
             if torch.cuda.is_available():
                 inputs_test = Variable(inputs_test.cuda())
             else:
                 inputs_test = Variable(inputs_test)
-
+            
             d1, d2, d3, d4, d5, d6, d7 = net(inputs_test)
-
+            
             # normalization
             pred = d1[:, 0, :, :]
             pred = normPRED(pred)
-
+            
             # save results to test_results folder
             save_output(img_name_list[i_test], pred, prediction_dir)
-
+            
             del d1, d2, d3, d4, d5, d6, d7
         except Exception as error:
             print(error)
