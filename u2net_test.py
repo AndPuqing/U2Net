@@ -141,10 +141,14 @@ def main():
             inputs_test = data_test['image']
             inputs_test = inputs_test.type(torch.FloatTensor)
             
+            # if torch.cuda.is_available():
+            #     inputs_test = Variable(inputs_test.cuda())
+            # else:
+            #     inputs_test = Variable(inputs_test)
             if torch.cuda.is_available():
-                inputs_test = Variable(inputs_test.cuda())
+                inputs_test = inputs_test.cuda()
             else:
-                inputs_test = Variable(inputs_test)
+                inputs_test = inputs_test
             
             d1, d2, d3, d4, d5, d6, d7 = net(inputs_test)
             
