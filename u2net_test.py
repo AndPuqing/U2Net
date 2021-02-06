@@ -76,13 +76,16 @@ def get_parameters():
     parser.add_argument("-i",
                         "--input",
                         help="Path to the file that lists all path to images",
+                        default='/content/U2Net/input.txt',
                         type=str)
     parser.add_argument("-o",
                         "--output_dir",
+                        default='/content/U2Net',
                         help="Path to the output dir", type=str)
     
     parser.add_argument("-e",
                         "--errorFile",
+                        default='/content/U2Net/error.txt',
                         help="Path to the log error file", type=str)
     args = parser.parse_args()
     
