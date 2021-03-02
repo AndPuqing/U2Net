@@ -1,1 +1,1 @@
-这是基于原版U2Net对新版Pytorch改进的显著目标检测
+基于原版U2Net对新版Pytorch改进的显著目标检测
